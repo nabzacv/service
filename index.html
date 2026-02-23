@@ -1,432 +1,357 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL WALAA | Enterprise Edition</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!doctype html>
 
+
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
     <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #f39237;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --bg: #f8f9fd;
-            --white: #ffffff;
-            --glass: rgba(255, 255, 255, 0.8);
-            --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-            --shadow-lg: 0 20px 50px rgba(0,0,0,0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-
-        body {
-            background: var(--bg);
-            background: linear-gradient(135deg, #f8f9fd 0%, #e0e5ec 100%);
+        :root { --primary: #2563eb; --indigo: #4f46e5; }
+        body { 
+            font-family: 'Cairo', sans-serif; 
+            background: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
         }
-
-        /* تأثيرات التنبيه المطور */
-        #custom-alert {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--white);
-            padding: 15px 40px;
-            border-radius: 50px;
-            box-shadow: var(--shadow-lg);
-            border-right: 5px solid var(--danger);
-            z-index: 9999;
-            transition: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 700;
+        .glass-container { 
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
         }
-        .alert-active { top: 30px !important; }
-
-        /* --- شاشة تسجيل الدخول --- */
-        .login-wrapper {
-            width: 100%;
-            max-width: 450px;
-            perspective: 1000px;
+        .step-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.5s ease; }
+        .step-content.active { display: block; opacity: 1; transform: translateY(0); }
+        
+        /* تحسين شكل المدخلات */
+        .input-style {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .login-card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            padding: 50px 40px;
-            border-radius: 30px;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255,255,255,0.3);
-            text-align: center;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .logo-box {
-            background: var(--white);
-            width: 90px;
-            height: 90px;
-            border-radius: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .input-field {
-            position: relative;
-            margin-bottom: 25px;
-        }
-
-        .input-field input {
-            width: 100%;
-            padding: 15px 50px 15px 15px;
-            border: 2px solid transparent;
-            background: var(--white);
-            border-radius: 15px;
-            font-size: 1rem;
-            transition: 0.3s;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .input-field input:focus {
+        .input-style:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
         }
 
-        .input-field i {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
+        /* أنيميشن التحميل */
+        @keyframes spinner { to { transform: rotate(360deg); } }
+        .loader { animation: spinner 0.8s linear infinite; }
 
-        .btn-modern {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
-        }
-
-        .btn-modern:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(67, 97, 238, 0.4); }
-        .btn-modern:active { transform: translateY(1px); }
-
-        /* --- شاشة الفاتورة (الكمبيوتر والموبايل) --- */
-        .dashboard {
-            width: 100%;
-            max-width: 1100px;
-            background: var(--white);
-            border-radius: 35px;
+        /* بوابة الدفع - كارت احترافي */
+        .premium-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            flex-direction: column;
-            animation: slideUp 0.6s ease-out;
         }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-
-        .dash-header {
-            background: var(--primary);
-            padding: 30px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .premium-card::before {
+            content: ''; position: absolute; top: -20%; left: -20%;
+            width: 140%; height: 140%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
         }
-
-        .dash-body { padding: 40px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; }
-
-        /* تعديلات الموبايل */
-        @media (max-width: 992px) {
-            .dash-body { grid-template-columns: 1fr; padding: 20px; }
-            .dashboard { border-radius: 0; margin: 0; }
-            body { padding: 0; }
-        }
-
-        .form-section { background: var(--bg); padding: 25px; border-radius: 20px; }
-        .form-section h3 { margin-bottom: 20px; color: var(--secondary); font-size: 1.1rem; }
-
-        .item-row { display: grid; grid-template-columns: 2fr 1fr 1fr 50px; gap: 10px; margin-bottom: 15px; }
-
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: right; padding: 15px; color: #777; font-weight: 600; border-bottom: 2px solid #eee; }
-        td { padding: 15px; border-bottom: 1px solid #f5f5f5; vertical-align: middle; }
-
-        .badge-qty { background: #e0e5ec; padding: 4px 10px; border-radius: 8px; font-weight: bold; }
-        .delete-btn { color: var(--danger); cursor: pointer; transition: 0.3s; padding: 8px; }
-        .delete-btn:hover { background: rgba(247, 37, 133, 0.1); border-radius: 50%; }
-
-        /* القالب المخفي للتصدير */
-        #export-zone {
-            position: absolute;
-            left: -9999px;
-            width: 794px; /* A4 Standard */
-            height: 1123px;
-            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhOp7NbYSExZ0eqH-kimQERHFsRgZxVz-44oD2VlgCaxnn4Ryy63MMViJqMzAeBVzcUtQRQWFOsoorx_5sx69ydS5fQqj9PSpWvkq6RPrY5RpxO7XlfXAHMK7Iy_FVcdgIVsu0ks4rqOR-ZrbOewmpa0g-0huNyXhVG3GeZlNNvMIwU-b-9HwolOYlVRkY/s1600/%D9%81%D8%A7%D8%AA%D9%88%D8%B1%D9%87.png') no-repeat center;
-            background-size: cover;
-        }
-
-        .hidden { display: none !important; }
-        .loader { width: 22px; height: 22px; border: 3px solid #fff; border-bottom-color: transparent; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
-</head>
-<body>
 
-    <div id="custom-alert"><i class="fas fa-exclamation-circle" style="color:var(--danger)"></i> <span id="alert-text"></span></div>
 
-    <div class="login-wrapper" id="loginContainer">
-        <div class="login-card">
-            <div class="logo-box">
-                <i class="fas fa-fire-alt" style="font-size: 2.5rem; color: var(--primary);"></i>
-            </div>
-            <h1 style="font-size:1.8rem; margin-bottom:10px; color:var(--secondary);">مرحباً بك</h1>
-            <p style="color:#888; margin-bottom:35px;">سجل دخولك لإدارة فواتير "الولاء"</p>
 
-            <div class="input-field">
-                <i class="fas fa-user-circle"></i>
-                <input type="text" id="userInput" placeholder="اسم المستخدم">
-            </div>
+    <div class="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 z-50"></div>
 
-            <div class="input-field">
-                <i class="fas fa-fingerprint"></i>
-                <input type="password" id="passInput" placeholder="كلمة المرور">
-            </div>
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <img src="https://via.placeholder.com/150x50?text=NABZA+PRO" alt="Logo" class="mx-auto mb-6 h-12" />
+            <h1 class="text-4xl font-black text-slate-900 mb-3 tracking-tight">صانع السيرة الذاتية الذكي</h1>
+            <p class="text-slate-500 font-medium">خطوات بسيطة تفصلك عن وظيفة أحلامك</p>
+        </div>
 
-            <button class="btn-modern" onclick="validateAccess()">
-                <span id="loginTxt">تسجيل الدخول</span>
-                <div id="loginLoad" class="loader hidden"></div>
-            </button>
+        <div class="flex items-center justify-between mb-10 px-2 max-w-md mx-auto relative">
+            <div class="absolute h-0.5 bg-slate-200 top-1/2 left-0 w-full -z-10"></div>
+            <div id="dot1" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-lg shadow-blue-200 transition-all duration-500">1</div>
+            <div id="dot2" class="w-10 h-10 rounded-full bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center font-bold transition-all duration-500">2</div>
+            <div id="dot3" class="w-10 h-10 rounded-full bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center font-bold transition-all duration-500">3</div>
+        </div>
 
-            <div id="cooldownBox" class="hidden" style="margin-top:20px; color:var(--danger); font-weight:700;">
-                <i class="fas fa-clock"></i> انتظر <span id="secCounter">60</span> ثانية
-            </div>
+        <div class="glass-container rounded-[2.5rem] shadow-2xl shadow-slate-200/60 overflow-hidden">
+            <form id="cvForm" action="https://submit.jotform.com/submit/260523691373054" method="post" enctype="multipart/form-data" class="p-8 md:p-14">
+                <input type="hidden" name="formID" value="260523691373054" />
+                <input type="hidden" name="simple_spc" value="260523691373054-260523691373054" />
+                <textarea name="q10_typeA10" id="input_10" class="hidden"></textarea>
+                <textarea name="q12_input12" id="input_12" class="hidden"></textarea>
+                <textarea name="q13_input13" id="input_13" class="hidden"></textarea>
+
+                <div class="step-content active" id="step1">
+                    <div class="flex items-center gap-3 mb-8 border-r-4 border-blue-600 pr-4">
+                        <h2 class="text-2xl font-black text-slate-800">المعلومات الشخصية</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 mr-1">الاسم الكامل</label>
+                            <input type="text" name="q3_input3" class="w-full p-4 rounded-2xl input-style outline-none" placeholder="مثال: سارة أحمد محمود" required />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 mr-1">المسمى الوظيفي</label>
+                            <input type="text" name="q4_input4" class="w-full p-4 rounded-2xl input-style outline-none" placeholder="مهندس برمجيات" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 mr-1">رقم التواصل</label>
+                            <input type="tel" name="q5_input5[full]" class="w-full p-4 rounded-2xl input-style outline-none text-left" dir="ltr" placeholder="+20 1xx xxxx xxx" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 mr-1">البريد الإلكتروني</label>
+                            <input type="email" name="q6_input6" class="w-full p-4 rounded-2xl input-style outline-none text-left" dir="ltr" placeholder="mail@example.com" />
+                        </div>
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-sm font-bold text-slate-700 mr-1">العنوان</label>
+                            <input type="text" name="q7_input7" class="w-full p-4 rounded-2xl input-style outline-none" placeholder="المحافظة، المدينة، الحي" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step2">
+                    <div class="flex items-center gap-3 mb-8 border-r-4 border-indigo-600 pr-4">
+                        <h2 class="text-2xl font-black text-slate-800">الخبرات والتعليم</h2>
+                    </div>
+                    <div class="space-y-8">
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700 mr-1">نبذة احترافية عنك</label>
+                            <textarea name="q9_input9" rows="3" class="w-full p-4 rounded-2xl input-style outline-none resize-none" placeholder="لخص أهم إنجازاتك في سطور..."></textarea>
+                        </div>
+                        <div id="experience-container" class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="briefcase" class="w-4 h-4 text-blue-600"></i> التاريخ المهني</h3>
+                                <button type="button" onclick="addExperience()" class="text-xs font-bold bg-blue-50 text-blue-600 px-4 py-2 rounded-full hover:bg-blue-100 transition">+ إضافة خبرة</button>
+                            </div>
+                            <div class="experience-item p-6 rounded-3xl bg-slate-50 border border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" placeholder="جهة العمل" class="p-3 rounded-xl border-none outline-none text-sm exp-company shadow-sm" />
+                                <input type="text" placeholder="المسمى" class="p-3 rounded-xl border-none outline-none text-sm exp-title shadow-sm" />
+                                <input type="text" placeholder="الفترة الزمنية" class="p-3 rounded-xl border-none outline-none text-sm exp-date shadow-sm" />
+                                <textarea placeholder="ماذا فعلت هناك؟" class="p-3 rounded-xl border-none outline-none text-sm exp-desc shadow-sm md:col-span-2"></textarea>
+                            </div>
+                        </div>
+                        <div id="education-container" class="space-y-4 border-t pt-8">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="graduation-cap" class="w-5 h-5 text-indigo-600"></i> المؤهلات الدراسية</h3>
+                                <button type="button" onclick="addEducation()" class="text-xs font-bold bg-indigo-50 text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-100 transition">+ إضافة تعليم</button>
+                            </div>
+                            <div class="education-item p-6 rounded-3xl bg-slate-50 border border-slate-100 grid grid-cols-2 gap-4">
+                                <input type="text" placeholder="المؤهل" class="p-3 rounded-xl border-none outline-none text-sm edu-degree shadow-sm" />
+                                <input type="text" placeholder="الجامعة" class="p-3 rounded-xl border-none outline-none text-sm edu-uni shadow-sm" />
+                                <input type="text" placeholder="السنة" class="p-3 rounded-xl border-none outline-none text-sm edu-year shadow-sm" />
+                                <input type="text" placeholder="التقدير" class="p-3 rounded-xl border-none outline-none text-sm edu-grade shadow-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-content" id="step3">
+                    <div class="flex items-center gap-3 mb-8 border-r-4 border-amber-500 pr-4">
+                        <h2 class="text-2xl font-black text-slate-800">اللمسات الأخيرة</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="tech_skills" class="p-4 rounded-2xl input-style outline-none" placeholder="المهارات التقنية" />
+                            <input type="text" id="soft_skills" class="p-4 rounded-2xl input-style outline-none" placeholder="المهارات الشخصية" />
+                            <input type="text" id="languages" class="p-4 rounded-2xl input-style outline-none" placeholder="اللغات" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700">لغة المستند</label>
+                            <select name="q15_input15" class="w-full p-4 rounded-2xl input-style outline-none">
+                                <option value="عربي" />العربية
+                                <option value="English" />English
+                                <option value="الاثنين" />لغتين (عربي + إنجليزي)
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-slate-700">الدورات التدريبية</label>
+                            <input type="text" name="q14_typeA14" class="w-full p-4 rounded-2xl input-style outline-none" placeholder="أهم شهاداتك" />
+                        </div>
+                        <div class="md:col-span-2">
+                            <div id="drop-zone" class="p-10 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 text-center hover:border-blue-500 hover:bg-blue-50/30 transition-all group cursor-pointer">
+                                <i data-lucide="upload-cloud" class="mx-auto w-12 h-12 text-slate-300 group-hover:text-blue-500 transition-colors mb-4"></i>
+                                <p class="text-slate-600 font-bold">ارفع سيرتك الذاتية السابقة</p>
+                                <p class="text-xs text-slate-400 mt-2">PDF, JPG, PNG (Max 5MB)</p>
+                                <input type="file" name="q16_input16[]" id="file-input" class="hidden" multiple />
+                                <div id="file-info" class="mt-3 text-blue-600 font-bold text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16 flex items-center justify-between">
+                    <button type="button" id="prevBtn" onclick="changeStep(-1)" class="px-8 py-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-100 transition hidden">السابق</button>
+                    <button type="button" id="nextBtn" onclick="handleButtonClick()" class="px-12 py-5 bg-slate-900 text-white rounded-2xl font-black shadow-2xl hover:bg-black transition-all flex items-center gap-3">
+                        <span id="btnText">التالي</span>
+                        <i id="btnIcon" data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <div class="dashboard hidden" id="dashboard">
-        <div class="dash-header">
-            <div>
-                <h2 style="font-size:1.4rem;">لوحة إدارة الفواتير</h2>
-                <p style="font-size:0.8rem; opacity:0.8;">مجموعة الولاء - الإصدار الاحترافي</p>
+    <div id="successModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-xl flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white rounded-[3rem] max-w-lg w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-500">
+            <div class="bg-blue-600 p-3 text-center text-[10px] text-white/80 font-bold uppercase tracking-widest">
+                <i data-lucide="lock" class="inline w-3 h-3 ml-1"></i> تشفير آمن 256-بت
             </div>
-            <i class="fas fa-shield-alt" style="font-size:1.5rem;"></i>
-        </div>
+            
+            <div class="p-10 text-center">
+                <div class="w-20 h-20 bg-green-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <i data-lucide="check-circle" class="w-10 h-10 text-green-500"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 mb-4">تم الاستلام بنجاح!</h2>
+                <p class="text-slate-500 mb-8 leading-relaxed">
+                    طلبك الآن قيد المراجعة الفنية من قبل خبراء التوظيف. لتفعيل الخدمة، يرجى تحويل قيمة <span class="font-bold text-slate-900">200 ج.م</span> عبر فودافون كاش:
+                </p>
 
-        <div class="dash-body">
-            <div class="form-container">
-                <div class="form-section" style="margin-bottom:20px;">
-                    <h3><i class="fas fa-user-tag"></i> بيانات العميل</h3>
-                    <div style="display:grid; gap:15px;">
-                        <input type="text" id="clientName" placeholder="اسم العميل الرباعي">
-                        <input type="tel" id="clientPhone" placeholder="رقم الجوال">
-                        <input type="date" id="billDate">
+                <div class="premium-card rounded-[2rem] p-8 text-white text-right mb-8 shadow-2xl shadow-blue-500/20 group cursor-pointer active:scale-95 transition-all" onclick="copyNumber()">
+                    <div class="flex justify-between items-center mb-10">
+                        <div class="w-12 h-8 bg-amber-400/20 rounded-md border border-amber-400/30 flex items-center justify-center">
+                            <div class="w-6 h-4 bg-amber-400/40 rounded-sm"></div>
+                        </div>
+                        <i data-lucide="wifi" class="w-6 h-6 text-white/30"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] text-white/50 uppercase tracking-widest font-bold">رقم محفظة التحويل</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl font-mono font-bold tracking-tighter">01157959631</span>
+                            <i data-lucide="copy" class="w-5 h-5 text-white/30 group-hover:text-white transition-colors"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <h3><i class="fas fa-cart-plus"></i> إضافة منتجات</h3>
-                    <div class="item-row">
-                        <input type="text" id="itemName" placeholder="اسم المنتج">
-                        <input type="number" id="itemQty" placeholder="الكمية">
-                        <input type="number" id="itemPrice" placeholder="السعر">
-                        <button class="btn-modern" style="padding:10px;" onclick="addToGrid()"><i class="fas fa-plus"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="preview-container">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="color:var(--secondary);">قائمة الطلبات</h3>
-                    <span id="totalBadge" style="background:var(--accent); color:white; padding:5px 15px; border-radius:50px; font-weight:800;">0 ج.م</span>
+                <div class="bg-amber-50 rounded-2xl p-4 mb-8 text-right flex gap-3">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-amber-600 shrink-0"></i>
+                    <p class="text-xs text-amber-800 leading-relaxed">
+                        يرجى الاحتفاظ بـ <strong>لقطة شاشة</strong> للتحويل وتأكيد رقم الهاتف المُرسل منه لضمان سرعة التسليم.
+                    </p>
                 </div>
 
-                <div class="table-container">
-                    <table id="mainTable">
-                        <thead>
-                            <tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th></th></tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-
-                <button class="btn-modern" style="margin-top:30px; background:var(--secondary);" onclick="finishAndPrint()">
-                    <i class="fas fa-cloud-download-alt"></i> <span id="printTxt">اعتماد وتحميل الفاتورة</span>
-                    <div id="printLoad" class="loader hidden"></div>
+                <button onclick="goToConfirmPage()" class="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-lg hover:shadow-xl transition-all flex items-center justify-center gap-3">
+                    تأكيد الدفع الآن
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-blue-400"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="export-zone">
-        <div id="exp_date" style="position:absolute; top:215px; left:80px; font-size:20px; font-weight:700;"></div>
-        <div id="exp_name" style="position:absolute; top:275px; right:185px; font-size:24px; font-weight:800; color:#2d344e;"></div>
-        <div id="exp_phone" style="position:absolute; top:315px; right:185px; font-size:20px; font-weight:600;"></div>
-        
-        <div id="exp_items_box" style="position:absolute; top:420px; right:60px; width:680px;">
-            </div>
-
-        <div id="exp_total" style="position:absolute; bottom:220px; left:105px; font-size:32px; font-weight:900; color:#2d344e;"></div>
-    </div>
-
     <script>
-        let errorStreak = 0;
-        let isWaiting = false;
-        let invoiceData = [];
+        lucide.createIcons();
+        let currentStep = 1;
 
-        function triggerAlert(msg) {
-            const box = document.getElementById('custom-alert');
-            document.getElementById('alert-text').innerText = msg;
-            box.classList.add('alert-active');
-            setTimeout(() => box.classList.remove('alert-active'), 5000);
-        }
-
-        function validateAccess() {
-            if(isWaiting) return;
-            const u = document.getElementById('userInput').value;
-            const p = document.getElementById('passInput').value;
-            const load = document.getElementById('loginLoad');
-            const txt = document.getElementById('loginTxt');
-
-            if (((u === 'مصطفى' || u === 'مصطفي') && p === '01096165681') || (u === 'admin' && p === '01017804647')) {
-                txt.innerText = "يتم التحقق...";
-                load.classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('loginContainer').classList.add('hidden');
-                    document.getElementById('dashboard').classList.remove('hidden');
-                }, 2500);
-            } else {
-                errorStreak++;
-                vibrateDevice();
-                
-                if(errorStreak === 1) triggerAlert("كلمة المرور غلط فكر شويه 🙂");
-                else if(errorStreak === 2) triggerAlert("انت عبيط ما كلمة المرور غلط 🤨");
-                else if(errorStreak === 3) triggerAlert("كلمة المرور غلط ودي اخر مره ليك😠");
-                else {
-                    triggerAlert("يا خو*** قولتلك استنى دقيقه طب يلااا استنى دقيقه كمان😡");
-                    startLockDown();
+        function updateUI() {
+            // Update Progress Dots
+            for(let i=1; i<=3; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if(i <= currentStep) {
+                    dot.classList.replace('bg-white', 'bg-blue-600');
+                    dot.classList.replace('border-slate-200', 'border-blue-600');
+                    dot.classList.replace('text-slate-400', 'text-white');
+                } else {
+                    dot.classList.replace('bg-blue-600', 'bg-white');
+                    dot.classList.replace('border-blue-600', 'border-slate-200');
+                    dot.classList.replace('text-white', 'text-slate-400');
                 }
             }
+
+            document.getElementById('prevBtn').classList.toggle('hidden', currentStep === 1);
+            document.getElementById('btnText').innerText = currentStep === 3 ? 'إرسال ومراجعة' : 'التالي';
+            lucide.createIcons();
         }
 
-        function startLockDown() {
-            isWaiting = true;
-            let timer = 60;
-            const box = document.getElementById('cooldownBox');
-            const count = document.getElementById('secCounter');
-            box.classList.remove('hidden');
-            
-            let timerId = setInterval(() => {
-                timer--;
-                count.innerText = timer;
-                if(timer <= 0) {
-                    clearInterval(timerId);
-                    isWaiting = false;
-                    box.classList.add('hidden');
-                    errorStreak = 0;
-                }
-            }, 1000);
+        function changeStep(n) {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            setTimeout(() => {
+                currentStep += n;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
         }
 
-        function vibrateDevice() { if(navigator.vibrate) navigator.vibrate([100, 50, 100]); }
-
-        function addToGrid() {
-            const name = document.getElementById('itemName').value;
-            const qty = document.getElementById('itemQty').value;
-            const price = document.getElementById('itemPrice').value;
-
-            if(name && qty && price) {
-                invoiceData.push({ id: Date.now(), name, qty, price, total: qty * price });
-                refreshTable();
-                document.getElementById('itemName').value = '';
-                document.getElementById('itemQty').value = '';
-                document.getElementById('itemPrice').value = '';
-            } else {
-                triggerAlert("أكمل بيانات المنتج أولاً! 🙄");
-            }
+        function handleButtonClick() {
+            if (currentStep < 3) changeStep(1);
+            else startLoadingEffect();
         }
 
-        function refreshTable() {
-            const tbody = document.querySelector('#mainTable tbody');
-            tbody.innerHTML = '';
-            let sum = 0;
-            invoiceData.forEach(item => {
-                sum += item.total;
-                tbody.innerHTML += `
-                    <tr>
-                        <td><b>${item.name}</b></td>
-                        <td><span class="badge-qty">${item.qty}</span></td>
-                        <td>${item.price} ج.م</td>
-                        <td><i class="fas fa-trash-alt delete-btn" onclick="removeItem(${item.id})"></i></td>
-                    </tr>`;
-            });
-            document.getElementById('totalBadge').innerText = sum + " ج.م";
-        }
+        function startLoadingEffect() {
+            const btn = document.getElementById('nextBtn');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
 
-        function removeItem(id) {
-            invoiceData = invoiceData.filter(i => i.id !== id);
-            refreshTable();
-        }
+            btn.disabled = true;
+            btn.classList.add('opacity-80');
+            btnText.innerText = "معالجة البيانات...";
+            btnIcon.innerHTML = `<svg class="loader w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2 a10 10 0 0 1 10 10"></path></svg>`;
 
-        async function finishAndPrint() {
-            const btnTxt = document.getElementById('printTxt');
-            const btnLoad = document.getElementById('printLoad');
-            
-            btnTxt.innerText = "جارِ المعالجة...";
-            btnLoad.classList.remove('hidden');
-
-            // ملء بيانات التصدير
-            document.getElementById('exp_name').innerText = document.getElementById('clientName').value || "عميل عام";
-            document.getElementById('exp_phone').innerText = document.getElementById('clientPhone').value || "---";
-            document.getElementById('exp_date').innerText = document.getElementById('billDate').value || new Date().toLocaleDateString();
-            document.getElementById('exp_total').innerText = document.getElementById('totalBadge').innerText;
-
-            let itemsHtml = `<table style="width:100%; text-align:right; border-spacing:0 12px; font-weight:600;">`;
-            invoiceData.forEach(item => {
-                itemsHtml += `<tr><td style="width:50%">${item.name}</td><td style="width:15%">${item.qty}</td><td style="width:15%">${item.price}</td><td style="width:20%">${item.total}</td></tr>`;
-            });
-            itemsHtml += `</table>`;
-            document.getElementById('exp_items_box').innerHTML = itemsHtml;
+            syncData();
 
             setTimeout(() => {
-                html2canvas(document.querySelector("#export-zone"), { scale: 3 }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `فاتورة_الولاء_${Date.now()}.png`;
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-                    btnTxt.innerText = "اعتماد وتحميل الفاتورة";
-                    btnLoad.classList.add('hidden');
-                });
-            }, 2500);
+                const form = document.getElementById('cvForm');
+                const formData = new FormData(form);
+                fetch(form.action, { method: 'POST', body: formData, mode: 'no-cors' });
+
+                document.getElementById('successModal').classList.remove('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-80');
+                btnText.innerText = "إرسال ومراجعة";
+                lucide.createIcons();
+            }, 3000);
         }
+
+        function syncData() {
+            let exps = "";
+            document.querySelectorAll('.experience-item').forEach(el => {
+                const comp = el.querySelector('.exp-company')?.value;
+                if(comp) exps += `الشركة: ${comp} | المسمى: ${el.querySelector('.exp-title').value} | التاريخ: ${el.querySelector('.exp-date').value}\nالمهام: ${el.querySelector('.exp-desc').value}\n---\n`;
+            });
+            document.getElementById('input_10').value = exps;
+
+            let edus = "";
+            document.querySelectorAll('.education-item').forEach(el => {
+                const deg = el.querySelector('.edu-degree')?.value;
+                if(deg) edus += `المؤهل: ${deg} | الجامعة: ${el.querySelector('.edu-uni').value} | سنة: ${el.querySelector('.edu-year').value} | تقدير: ${el.querySelector('.edu-grade').value}\n---\n`;
+            });
+            document.getElementById('input_12').value = edus;
+
+            document.getElementById('input_13').value = `تقنية: ${document.getElementById('tech_skills').value}\nشخصية: ${document.getElementById('soft_skills').value}\nلغات: ${document.getElementById('languages').value}`;
+        }
+
+        function goToConfirmPage() {
+            window.location.href = "your-link-here"; 
+        }
+
+        function copyNumber() {
+            navigator.clipboard.writeText("01157959631");
+            alert("✅ تم نسخ رقم التحويل بنجاح");
+        }
+
+        function addExperience() {
+            const div = document.createElement('div');
+            div.className = "experience-item p-6 rounded-3xl bg-white border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4 relative animate-in slide-in-from-right duration-300";
+            div.innerHTML = `<button type="button" onclick="this.parentElement.remove()" class="absolute -top-2 -left-2 bg-red-50 text-red-500 p-1 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <input type="text" placeholder="جهة العمل" class="p-3 bg-slate-50 rounded-xl outline-none text-sm exp-company">
+                <input type="text" placeholder="المسمى" class="p-3 bg-slate-50 rounded-xl outline-none text-sm exp-title">
+                <input type="text" placeholder="الفترة" class="p-3 bg-slate-50 rounded-xl outline-none text-sm exp-date">
+                <textarea placeholder="المهام..." class="p-3 bg-slate-50 rounded-xl outline-none text-sm exp-desc md:col-span-2"></textarea>`;
+            document.getElementById('experience-container').appendChild(div);
+            lucide.createIcons();
+        }
+
+        function addEducation() {
+            const div = document.createElement('div');
+            div.className = "education-item p-6 rounded-3xl bg-white border border-slate-100 shadow-sm grid grid-cols-2 gap-4 relative animate-in slide-in-from-right duration-300";
+            div.innerHTML = `<button type="button" onclick="this.parentElement.remove()" class="absolute -top-2 -left-2 bg-red-50 text-red-500 p-1 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <input type="text" placeholder="المؤهل" class="p-3 bg-slate-50 rounded-xl outline-none text-sm edu-degree">
+                <input type="text" placeholder="الجامعة" class="p-3 bg-slate-50 rounded-xl outline-none text-sm edu-uni">
+                <input type="text" placeholder="السنة" class="p-3 bg-slate-50 rounded-xl outline-none text-sm edu-year">
+                <input type="text" placeholder="التقدير" class="p-3 bg-slate-50 rounded-xl outline-none text-sm edu-grade">`;
+            document.getElementById('education-container').appendChild(div);
+            lucide.createIcons();
+        }
+
+        const dz = document.getElementById('drop-zone');
+        const fi = document.getElementById('file-input');
+        dz.onclick = () => fi.click();
+        fi.onchange = () => { document.getElementById('file-info').innerText = `تم اختيار ${fi.files.length} ملفات`; };
     </script>
-</body>
-</html>
+
+</!doctype>
